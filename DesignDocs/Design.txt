@@ -1,0 +1,44 @@
+
+
+Youtube Watch Party
+    - An app for watching synced youtube videos with your friends / coworkers
+
+User Stories:
+    Room Owner:
+        - Can create a new viewing Room
+        - Can send invite links
+        - Can watch the synched up videos
+        - can select the next video to play and add it to a queue
+    
+    Viewers:
+        - Can view the synced up video
+        - Can accept join links
+
+    Icebox Features (mostly using webhooks):
+        - Instead of the room owner adding videos to a queue, users can pick videos they want to see and vote on which one will be next
+        - Live chat app built in to the SPA
+        - Chrome extension
+
+
+Data Models:
+    User:
+        Email: string
+        Username: string
+        Password: string
+        Room: ref(room)
+    
+    Room:
+        Owner: ref(User)
+        Viewers: [ref(User)]
+        Current Video: string
+        VideoQueue: [string]
+
+
+Milestones:
+1. Database and Crud (for now just sends back video url)
+2. JWT Auth / Invite Links 
+3. Embedded youtube player
+4. Sync video playback
+5. Webhooks for live chat app
+6. Webhooks for live voting
+7. Refactor to make it look good (transitions)
