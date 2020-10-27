@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- YOUTUBE PLAYER -->
+    <div id="player"></div>
+
+    <div>
+        <input id="videoUrlInput" type="text" placeholder="Video URL">
+        <input id="submitVideoUrl" type="submit" value="Change Video">
+    </div>
+
+    <!-- ROOM CONTROLS -->
+    <div>
+        <form method="POST" action="/rooms/">
+            <input type="submit" value="Create a Room">
+        </form>
+        <input type="text" placeholder="Room ID">
+    </div>
+</body>
+<script>
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: 'ZZ5LpwO-An4',
+        events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+        }
+    });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    var done = false;
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING && !done) {
+            setTimeout(stopVideo, 6000);
+            done = true;
+        }
+    }
+
+    function stopVideo() {
+      player.stopVideo();
+    }
+
+    document.getElementById("submitVideoUrl")
+        .addEventListener("click", () => {
+            const input = document.getElementById("videoUrlInput")
+            const videoId = getIdFromVideoUrl(input.value)
+            player.cueVideoById(videoId)
+            input.value = ""
+        })
+
+    function getIdFromVideoUrl(url){
+        videoIdIndex = url.indexOf("?v=") + 3
+        videoId = ""
+        while(url.charAt(videoIdIndex) !== "&" && videoIdIndex < url.length){
+            videoId += url.charAt(videoIdIndex)
+            videoIdIndex++
+        }
+        return videoId
+    }
+
+</script>
+</html>
