@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
         const {email, password} = req.body
         const foundUser = await db.User.findOne({email:email})
         if (!email || !password){
-            return res.sendStatus(400)
+            return res.redirect("/login")
         }
         else {
             const isValidPassword = await bcrypt.compare(password, foundUser.password)
@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
             })
             res.cookie("token", token, {maxAge: jwtExpiry * 1000})
 
-            res.render("index")
+            res.redirect("/rooms")
         }
     }
     catch(err){

@@ -5,7 +5,7 @@ const db = require('../Models')
 // INDEX
 router.get('/', async (req, res) => {
     try{
-        const rooms = await db.find({public:true})
+        const rooms = await db.Room.find({public:true})
         return res.render('roomList', {rooms})
     }catch(err){
         console.log(err)
@@ -18,10 +18,10 @@ router.get('/:id', async (req, res) => {
     //check that user is allowed in this room
     try{
         const room = await db.Room.findById(req.params.id)
-        if (room.owner == app.locals.currentUserId){
+        if (room.owner == req.app.locals.currentUserId){
             return res.render('player', {room, isOwner: true})
         }
-        else if (room.invited.contains(app.locals.currentUserId)){
+        else if (room.invited.contains(req.app.locals.currentUserId)){
             return res.render('player', {room, isOwner: false})
         }
         else{
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
         res.redirect(`/rooms/${room._id}`)
     } catch(err){
         console.log("err", err)
-        res.render("index")
+        res.redirect("/rooms")
     }
 })
 
