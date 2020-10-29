@@ -8,10 +8,15 @@ const jwt = require("jsonwebtoken")
 const jwtKey = "temporaryDevKey" //replace with path.env later
 const jwtExpiry = 300;
 
+
+router.get('/login', (req,res) => {
+    res.render('signup')
+})
+
+
 // LOGIN
 router.post('/login', async (req, res) => {
     try{
-        console.log(req.body)
         const {email, password} = req.body
         const foundUser = await db.User.findOne({email:email})
         if (!email || !password){
@@ -26,7 +31,6 @@ router.post('/login', async (req, res) => {
                 algorithm: "HS256",
                 expiresIn: jwtExpiry,
             })
-            console.log("token:", token)
             res.cookie("token", token, {maxAge: jwtExpiry * 1000})
 
             res.render("index")

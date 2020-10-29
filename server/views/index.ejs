@@ -7,65 +7,86 @@
 </head>
 <body>
 
+    <h1>Welcome back <%= locals.currentUserEmail %></h1>
     <!-- YOUTUBE PLAYER -->
     <div id="player"></div>
 
-    <div>
-        <input id="videoUrlInput" type="text" placeholder="Video URL">
-        <input id="submitVideoUrl" type="submit" value="Change Video">
-    </div>
-
     <!-- ROOM CONTROLS -->
+    <% if (locals.isRoomOwner) {%>
+        <div>
+            <div>
+                <form onsubmit="emitUrlChange(event)">
+                    <input id="videoUrlInput" type="text" placeholder="Video URL">
+                    <input id="submitVideoUrl" type="submit" value="Change Video">
+                </form>
+            </div>
+
+        </div>
+    <% } %>    
+    <!-- END ROOM CONTROLS -->
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:3000', {
+            query: document.cookie   
+        })
+    </script>
+
     <div>
-        <form method="POST" action="/rooms/">
-            <input type="submit" value="Create a Room">
+        <form onsubmit="emitChat(event)">
+            <input id="chatInput" placeholder="chat message" type="text">
+            <input type="submit" value="submit">
         </form>
-        <input type="text" placeholder="Room ID">
     </div>
 </body>
 <script>
-    var tag = document.createElement('script');
 
+
+    var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     var player;
     function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-        height: '390',
-        width: '640',
-        videoId: 'ZZ5LpwO-An4',
-        events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-        }
-    });
+        player = new YT.Player('player', {
+            height: '390',
+            width: '640',
+            videoId: 'usO_6-RuCrg',
+            playerVars: {
+                autoplay: 1,
+                controls:0,
+                disablekb:1,
+                fs:0,
+                modestBranding:1,
+                volume:0,
+            },
+            events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+            }
+        });
     }
 
+
+    
     function onPlayerReady(event) {
         event.target.playVideo();
     }
 
     var done = false;
+
+    let previousPlayerState = null;
+
     function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-            setTimeout(stopVideo, 6000);
-            done = true;
+        if (event.data == YT.PlayerState.PAUSED){
+            emitPause()
         }
+        else if (event.data == YT.PlayerState.PLAYING){
+            emitResume()
+        }
+        else{}
     }
-
-    function stopVideo() {
-      player.stopVideo();
-    }
-
-    document.getElementById("submitVideoUrl")
-        .addEventListener("click", () => {
-            const input = document.getElementById("videoUrlInput")
-            const videoId = getIdFromVideoUrl(input.value)
-            player.cueVideoById(videoId)
-            input.value = ""
-        })
 
     function getIdFromVideoUrl(url){
         videoIdIndex = url.indexOf("?v=") + 3
@@ -76,6 +97,55 @@
         }
         return videoId
     }
+
+    // SOCKET EMITTERS
+
+    function emitChat(event){
+        console.log("called")
+        event.preventDefault();
+        const input = document.getElementById("chatInput");
+        const message = input.value;
+        if (message != ""){
+            socket.emit('chat message', message);
+        }
+        input.value = "";
+        return false;
+    }
+
+    function emitUrlChange(event){
+        event.preventDefault()
+        const input = document.getElementById("videoUrlInput")
+        const videoId = getIdFromVideoUrl(input.value)
+        input.value = ""
+        socket.emit('url change', videoId)
+    }
+
+    function emitPause(){
+        console.log("Emitting pause command")
+        socket.emit('pause', 'true')
+    }
+
+    function emitResume(){
+        console.log("Emitting resume command")
+        socket.emit('resume', 'true')
+    }
+
+    // SOCKET RECEIVERS
+
+    socket.on('pause', (msg) => {
+        console.log("received pause command")
+        player.pauseVideo()
+    })
+
+    socket.on('resume', (msg) => {
+        console.log("received resume command")
+        player.playVideo()
+    })
+
+    socket.on('url change', (msg)=>{
+        console.log('received url change command: ' + msg)
+        player.cueVideoById(msg)
+    })
 
 </script>
 </html>
