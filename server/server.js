@@ -1,34 +1,35 @@
+// External Imports
 const jwt = require("jsonwebtoken");
 const express = require("express");
-const app = express();
-const server = require("http").createServer(app);
 const uuid = require("uuid");
 const WebSocket = require("ws");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
 
+// Server Initialization
+const app = express();
+const server = require("http").createServer(app);
 
+// Middleware
+const authenticate = require("./middleware/authenticate")(app);
+app.use(cookieParser());
+app.use(express.urlencoded({extended: true}))
+
+// Configs
 app.set("view engine", "ejs");
 
 // serve public folder
 app.use(express.static('public'));
-app.use(cookieParser());
-app.use(express.urlencoded({extended: true}))
 
-const authenticate = require("./middleware/authenticate")(app);
-
-const db = require('./Models')
-
+// HTTP Routes
 app.use("/users", require("./Routes/Users"));
 app.use("/rooms", authenticate, require("./Routes/Rooms"))
 app.use("/", (req, res) => {
     res.redirect("/rooms")
 })
 
-
-let userId = null;
-
+// Mount a websocket server onto the http server
 var io = require('./websocketServer')(app, server)
 
 server.listen(3000, () => {
