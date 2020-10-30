@@ -49,10 +49,9 @@ router.post('/', async (req, res) => {
         const room = await db.Room.create({
             owner: req.app.locals.currentUserId,
         })
-        console.log("room", room)
         res.redirect(`/rooms/${room._id}`)
     } catch(err){
-        console.log("err", err)
+        console.log(err)
         res.redirect("/rooms")
     }
 })
