@@ -31,7 +31,7 @@ app.use("/", (req, res) => {
 })
 
 // Mount a websocket server onto the http server
-var io = require('./websocketServer')(app, server)
+require('./websocketServer')(server)
 
 server.listen(3000, () => {
     console.log(`Listening on port: ${3000}`)

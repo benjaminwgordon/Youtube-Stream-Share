@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken')
 const db = require('./Models')
 
-const websocketServer = (app, httpServer) => {
+const websocketServer = (httpServer) => {
     let userId = null;
     var io = require('socket.io')(httpServer);
     io.use(function(socket, next){
         if (socket.handshake.query && socket.handshake.query.token){
-            jwt.verify(socket.handshake.query.token, 'temporaryDevKey', (err, decoded) => {
+            jwt.verify(socket.handshake.query.token, process.env.JWT_KEY, (err, decoded) => {
                 if (err) {return (new Error('Authentication Error'))}
                 socket.decoded = decoded
                 db.User.findOne({email: socket.decoded.email}, (err, foundUser) => {
@@ -69,7 +69,6 @@ const websocketServer = (app, httpServer) => {
             }
         })
     })
-    return io
 }
 
 module.exports = websocketServer
