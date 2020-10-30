@@ -58,41 +58,40 @@ io.use(function(socket, next){
                 console.log(err)
                 return next(err)
             }
-            console.log("foundroom owner id: " , foundRoom.owner._id)
-            console.log("foundUser id: ", foundUser._id)
             isRoomOwner = (foundRoom.owner._id.toString() == foundUser._id.toString())
-            console.log("owns rooms: " , isRoomOwner)
             room = foundRoom._id.toString()
             socket.join(room)
-            console.log(`User: ${userId} connected to Room: ${room}`)
+            console.log(`Room ${room}: Connected User: ${foundUser.email}`)
         });
 
     })
     socket.on('disconnect', () => {
         console.log(`Room: ${room}: user disconnected`);
+        if (isRoomOwner){
+            //shut down the room
+            console.log(`Room ${room}: Shutting Down`)
+            socket.to(room).broadcast.emit('room shutdown')
+        }
       });
     socket.on('chat message', (msg)=>{
-        console.log(`Room: ${room}: ${msg}`)
+        console.log(`Room ${room}: ${msg}`)
         socket.to(room).broadcast.emit('chat message', msg)
     })
     socket.on('pause', (msg) => {
-        console.log(`Room: ${room}: Pause Command Received`)
         if (isRoomOwner){
             console.log(`Room: ${room}: Pause Command Emitted`)
             socket.to(room).emit('pause', 'true')
         }
     })
     socket.on('resume', (msg) => {
-        console.log(`Room: ${room}: Resume Command Received`)
         if (isRoomOwner){
-            console.log(`Room: ${room}: Resume Command Emitted`)
+            console.log(`Room ${room}: Resume Command Emitted`)
             socket.to(room).broadcast.emit('resume', 'true')
         }
     })
     socket.on('url change', (msg) =>{
-        console.log(`Room: ${room}: Url Change Commmand Received to: ${msg}`)
         if (isRoomOwner){
-            console.log(`Room: ${room}: URL Change Command Emitted`)
+            console.log(`Room ${room}: URL Change Command Emitted`)
             socket.to(room).emit('url change', msg)
         }
     })
