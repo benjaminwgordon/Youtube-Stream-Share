@@ -5,7 +5,7 @@ const path = require("path")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken")
 
-const jwtKey = "temporaryDevKey" //replace with path.env later
+const jwtKey = process.env.JWT_KEY //replace with path.env later
 const jwtExpiry = 300;
 
 

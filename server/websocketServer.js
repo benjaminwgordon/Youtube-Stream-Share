@@ -52,7 +52,7 @@ const websocketServer = (app, httpServer) => {
         })
         socket.on('pause', (msg) => {
             if (isRoomOwner){
-                console.log(`Room: ${room}: Pause Command Emitted`)
+                console.log(`Room ${room}: Pause Command Emitted`)
                 socket.to(room).emit('pause', 'true')
             }
         })

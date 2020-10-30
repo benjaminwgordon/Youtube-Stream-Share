@@ -11,7 +11,7 @@ module.exports = (app) => {
     
         let payload
         try{
-            payload = jwt.verify(token, "temporaryDevKey")  //REPLACE WITH PROCESS.ENV
+            payload = jwt.verify(token, process.env.JWT_KEY)  //REPLACE WITH PROCESS.ENV
             const currentUser = await db.User.findOne({email: payload.email});
             app.locals.currentUserId = currentUser.id;
             app.locals.currentUserEmail = currentUser.email;
