@@ -16,8 +16,8 @@
             <% if (rooms.length == 0 ) { %>
                 <p>No public rooms found</p>
             <% } %>
-            <% for (room in rooms) { %>
-                <li><a href=`/rooms/${room._id}`>room.name</a></li>
+            <% for (room of rooms) { %>
+                <li><a href=<%= `/rooms/${room}` %>>room.name</a></li>
             <% } %>
         </ul>
     </div>

@@ -8,7 +8,7 @@ const RoomSchema = new Schema({
     invited: [{type: Schema.Types.ObjectId, ref: "User"}],
     currentVideo: {type:String},
     videoQueue: [{type: String}],
-    public: {Boolean, default:false}
+    public: {type:Boolean, default:true}
 })
 
 module.exports = mongoose.model("Room", RoomSchema)

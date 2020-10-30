@@ -1,23 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Document</title>
 </head>
 <body>
 
+    <!-- CONNECT TO SOCKET -->
+    <script src='/socket.io/socket.io.js'></script>
+    <script>
+        var socket = io.connect('http://localhost:3000', {
+            query: document.cookie
+        })
+    </script>
+
     <h1>Welcome back <%= locals.currentUserEmail %></h1>
+
     <!-- YOUTUBE PLAYER -->
-    <div id="player"></div>
+    <div id='player'></div>
 
     <!-- ROOM CONTROLS -->
     <% if (locals.isRoomOwner) {%>
         <div>
             <div>
-                <form onsubmit="emitUrlChange(event)">
-                    <input id="videoUrlInput" type="text" placeholder="Video URL">
-                    <input id="submitVideoUrl" type="submit" value="Change Video">
+                <form onsubmit='emitUrlChange(event)'>
+                    <input id='videoUrlInput' type='text' placeholder='Video URL'>
+                    <input id='submitVideoUrl' type='submit' value='Change Video'>
                 </form>
             </div>
 
@@ -25,25 +34,27 @@
     <% } %>    
     <!-- END ROOM CONTROLS -->
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io.connect('http://localhost:3000', {
-            query: document.cookie   
-        })
-    </script>
-
+    <!-- CHAT -->
     <div>
-        <form onsubmit="emitChat(event)">
-            <input id="chatInput" placeholder="chat message" type="text">
-            <input type="submit" value="submit">
+        <form onsubmit='emitChat(event)'>
+            <input id='chatInput' placeholder='chat message' type='text'>
+            <input type='submit' value='submit'>
         </form>
     </div>
+
+    <div>
+        <ul id='chat'></ul>
+    </div>
+    <!-- END CHAT -->
 </body>
 <script>
 
+    // join the current rooms socket connection
+
+
 
     var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
+    tag.src = 'https://www.youtube.com/iframe_api';
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -52,9 +63,9 @@
         player = new YT.Player('player', {
             height: '390',
             width: '640',
-            videoId: 'usO_6-RuCrg',
+            videoId: 'oKD-MVfC9Ag',
             playerVars: {
-                autoplay: 1,
+                autoplay: 0,
                 controls:0,
                 disablekb:1,
                 fs:0,
@@ -89,56 +100,69 @@
     }
 
     function getIdFromVideoUrl(url){
-        videoIdIndex = url.indexOf("?v=") + 3
-        videoId = ""
-        while(url.charAt(videoIdIndex) !== "&" && videoIdIndex < url.length){
+        videoIdIndex = url.indexOf('?v=') + 3
+        videoId = ''
+        while(url.charAt(videoIdIndex) !== '&' && videoIdIndex < url.length){
             videoId += url.charAt(videoIdIndex)
             videoIdIndex++
         }
         return videoId
     }
 
+    function appendMessageToChat(msg){
+        const message = document.createElement('li')
+        message.appendChild(document.createTextNode(msg))
+        document.getElementById('chat').appendChild(message)
+    }
+
     // SOCKET EMITTERS
 
     function emitChat(event){
-        console.log("called")
+        console.log('called')
         event.preventDefault();
-        const input = document.getElementById("chatInput");
+        const input = document.getElementById('chatInput');
         const message = input.value;
-        if (message != ""){
+        if (message != ''){
             socket.emit('chat message', message);
+            //append message to users own chat instantly
+            appendMessageToChat(message)
         }
-        input.value = "";
+        input.value = '';
         return false;
     }
 
     function emitUrlChange(event){
         event.preventDefault()
-        const input = document.getElementById("videoUrlInput")
+        const input = document.getElementById('videoUrlInput')
         const videoId = getIdFromVideoUrl(input.value)
-        input.value = ""
+        input.value = ''
         socket.emit('url change', videoId)
     }
 
     function emitPause(){
-        console.log("Emitting pause command")
+        console.log('Emitting pause command')
         socket.emit('pause', 'true')
     }
 
     function emitResume(){
-        console.log("Emitting resume command")
+        console.log('Emitting resume command')
         socket.emit('resume', 'true')
     }
 
     // SOCKET RECEIVERS
 
+    socket.on('chat message', (msg) => {
+        console.log('received chat message')
+        appendMessageToChat(msg)
+    })
+
     socket.on('pause', (msg) => {
-        console.log("received pause command")
+        console.log('received pause command')
         player.pauseVideo()
     })
 
     socket.on('resume', (msg) => {
-        console.log("received resume command")
+        console.log('received resume command')
         player.playVideo()
     })
 
