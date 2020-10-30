@@ -48,46 +48,52 @@ io.use(function(socket, next){
     }
 }).on('connection', (socket) => {
     let isRoomOwner = false
-    console.log("userid: " , userId)
+    let room = null
     db.User.findById(userId, (err, foundUser) => {
         if (err) {
             console.log(err)
         }
-        const room = db.Room.findById(foundUser.room, (err, room) => {
+        db.Room.findById(foundUser.room, (err, foundRoom) => {
             if (err) {
                 console.log(err)
                 return next(err)
             }
-            isRoomOwner = (room.owner == userId)
-            console.log(typeof room._id)
-            socket.join(room._id.toString())
-            console.log(`User: ${userId} connected to Room: ${room._id}`)
+            console.log("foundroom owner id: " , foundRoom.owner._id)
+            console.log("foundUser id: ", foundUser._id)
+            isRoomOwner = (foundRoom.owner._id.toString() == foundUser._id.toString())
+            console.log("owns rooms: " , isRoomOwner)
+            room = foundRoom._id.toString()
+            socket.join(room)
+            console.log(`User: ${userId} connected to Room: ${room}`)
         });
 
     })
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log(`Room: ${room}: user disconnected`);
       });
     socket.on('chat message', (msg)=>{
-        console.log(msg)
-        socket.broadcast.emit('chat message', msg)
+        console.log(`Room: ${room}: ${msg}`)
+        socket.to(room).broadcast.emit('chat message', msg)
     })
     socket.on('pause', (msg) => {
-        console.log("pause")
+        console.log(`Room: ${room}: Pause Command Received`)
         if (isRoomOwner){
-            socket.emit('pause', 'true')
+            console.log(`Room: ${room}: Pause Command Emitted`)
+            socket.to(room).emit('pause', 'true')
         }
     })
     socket.on('resume', (msg) => {
-        console.log("resume")
+        console.log(`Room: ${room}: Resume Command Received`)
         if (isRoomOwner){
-            socket.broadcast.emit('resume', 'true')
+            console.log(`Room: ${room}: Resume Command Emitted`)
+            socket.to(room).broadcast.emit('resume', 'true')
         }
     })
     socket.on('url change', (msg) =>{
-        console.log('changing url: ' + msg)
+        console.log(`Room: ${room}: Url Change Commmand Received to: ${msg}`)
         if (isRoomOwner){
-            socket.emit('url change', msg)
+            console.log(`Room: ${room}: URL Change Command Emitted`)
+            socket.to(room).emit('url change', msg)
         }
     })
 })

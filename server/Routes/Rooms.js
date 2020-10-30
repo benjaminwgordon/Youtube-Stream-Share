@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
 // SHOW
 router.get('/:id', async (req, res) => {
     //check that user is allowed in this room
-    console.log(req.params.id)
     try{
         const room = await db.Room.findById(req.params.id)
         const user = await db.User.findById(req.app.locals.currentUserId)
@@ -26,10 +25,10 @@ router.get('/:id', async (req, res) => {
             await user.save()
             return res.render('player', {room, isOwner: true})
         }
-        else if (room.invited.contains(req.app.locals.currentUserId)){
+        else if (room.public || room.invited.includes(user._id)){
             user.room = room._id
             await user.save()
-            room.viewers.push(req.app.locals.currentUserId)
+            room.viewers.push(user)
             await room.save()
             return res.render('player', {room, isOwner: false})
         }
