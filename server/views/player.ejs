@@ -120,6 +120,7 @@
 
     // send a timestamp synchronization signal
     setInterval(() => {
+        console.log("emitting sync")
         socket.emit('sync', player.getCurrentTime())
     }, 2000)
 
@@ -131,7 +132,7 @@
         if (message != ''){
             socket.emit('chat message', message);
             //append message to users own chat instantly
-            appendMessageToChat(message)
+            appendMessageToChat(`<%= locals.currentUserEmail %>: ${message}`)
         }
         input.value = '';
         return false;
@@ -162,7 +163,7 @@
         console.log('sync signal received')
         const timeDiff = Math.abs(player.getCurrentTime() - hostTime)
         console.log("TimeDiff: ", timeDiff)
-        if (timeDiff >= 0.5){
+        if (timeDiff >= 0.5 && player.getPlayerState() != YT.PlayerState.PAUSED){
             player.seekTo(hostTime, true)
         }
     })
@@ -190,6 +191,11 @@
 
     socket.on('room closed', ()=>{
         console.log('stream room closed')
+        window.location.replace('http://localhost:3000/rooms');
+    })
+
+    socket.on('room connect error', ()=>{
+        console.log('room connect error')
         window.location.replace('http://localhost:3000/rooms');
     })
 

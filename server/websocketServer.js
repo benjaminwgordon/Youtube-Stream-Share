@@ -1,4 +1,5 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { connection } = require('mongoose');
 const db = require('./Models')
 
 const websocketServer = (httpServer) => {
@@ -31,10 +32,15 @@ const websocketServer = (httpServer) => {
                     console.log(err)
                     return next(err)
                 }
-                isRoomOwner = (foundRoom.owner._id.toString() == foundUser._id.toString())
-                room = foundRoom._id.toString()
-                socket.join(room)
-                console.log(`Room ${room}: Connected User: ${foundUser.email}`)
+                if (foundRoom){
+                    isRoomOwner = (foundRoom.owner._id.toString() == foundUser._id.toString())
+                    room = foundRoom._id.toString()
+                    socket.join(room)
+                    console.log(`Room ${room}: Connected User: ${foundUser.email}`)
+                }
+                else{
+                    socket.emit('room connect error')
+                }
             });
 
         })
@@ -44,14 +50,16 @@ const websocketServer = (httpServer) => {
                 //shut the room down
                 try{
                     const user = await db.User.findById(userId)
+                    console.log("user", user)
                     const room = await db.Room.findById(user.room)  
+                    console.log("room", room)
                     room.viewers.forEach(viewer => {viewer.room = null})
                     await db.Room.findByIdAndDelete(room._id)
-                    socket.broadcast.emit('room closed');            
+                    socket.broadcast.emit('room closed'); 
                 }
                 catch(err){
                     console.log(err)
-                    redirect("/rooms")
+                    socket.emit('room connect error')
                 }
 
                 console.log(`Room ${room}: Shutting Down`)
@@ -63,12 +71,16 @@ const websocketServer = (httpServer) => {
             }
         });
         socket.on('sync', time =>{
-            console.log('`Room ${room}: Emitting Synchronization Signal ')
             if (isRoomOwner){
                 socket.broadcast.emit('sync', time)
             }
         })
         socket.on('chat message', (msg)=>{
+            console.log("room", room)
+            console.log(io.sockets.clients(room).map(client => {
+                return client
+            }))   
+
             console.log(`Room ${room}: ${msg}`)
             db.User.findById(userId, (err, foundUser) => {
                 socket.broadcast.to(room).emit('chat message', `${foundUser.email}: ${msg}`)
