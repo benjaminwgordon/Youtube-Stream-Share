@@ -62,6 +62,12 @@ const websocketServer = (httpServer) => {
                 console.log(`Room ${room}: User ${foundUser.email} has disconnected`)
             }
         });
+        socket.on('sync', time =>{
+            console.log('`Room ${room}: Emitting Synchronization Signal ')
+            if (isRoomOwner){
+                socket.broadcast.emit('sync', time)
+            }
+        })
         socket.on('chat message', (msg)=>{
             console.log(`Room ${room}: ${msg}`)
             db.User.findById(userId, (err, foundUser) => {
