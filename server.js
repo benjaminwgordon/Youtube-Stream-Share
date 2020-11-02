@@ -17,6 +17,7 @@ app.use(express.urlencoded({extended: true}))
 
 // Configs
 app.set("view engine", "ejs");
+const PORT = process.env.PORT || 3000
 
 // serve public folder
 app.use(express.static('public'));
@@ -31,6 +32,6 @@ app.use("/", (req, res) => {
 // Mount a websocket server onto the http server
 require('./websocketServer')(server)
 
-server.listen(3000, () => {
+server.listen(PORT, () => {
     console.log(`Listening on port: ${3000}`)
 })
