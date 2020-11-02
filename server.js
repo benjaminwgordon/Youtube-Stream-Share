@@ -2,9 +2,7 @@
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
 const express = require("express");
-const uuid = require("uuid");
 const WebSocket = require("ws");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 
 
