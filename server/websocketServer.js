@@ -70,22 +70,11 @@ const websocketServer = (httpServer) => {
             }
         });
         socket.on('sync', async (time) =>{
-            // LOGGING
-            const user = await db.User.findById(userId)
-            console.log("user: ", user)
-            const room = await db.Room.findById(user.room)
-            console.log("room: ", room)
-            //END LOGGING 
             if (isRoomOwner){
                 socket.broadcast.emit('sync', time)
             }
         })
         socket.on('chat message', (msg)=>{
-            console.log("room", room)
-            console.log(io.sockets.clients(room).map(client => {
-                return client
-            }))   
-
             console.log(`Room ${room}: ${msg}`)
             db.User.findById(userId, (err, foundUser) => {
                 socket.broadcast.to(room).emit('chat message', `${foundUser.email}: ${msg}`)
