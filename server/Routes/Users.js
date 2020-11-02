@@ -1,12 +1,10 @@
 const router = require("express").Router()
-const mongoose = require("mongoose")
 const db = require('../Models')
-const path = require("path")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken")
 
-const jwtKey = process.env.JWT_KEY //replace with path.env later
-const jwtExpiry = 300;
+const jwtKey = process.env.JWT_KEY
+const jwtExpiry = 1 * 60 * 60 * 24 * 7 // one week valid token;
 
 
 router.get('/login', (req,res) => {

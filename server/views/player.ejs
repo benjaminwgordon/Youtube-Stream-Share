@@ -21,7 +21,7 @@
     <div id='player'></div>
 
     <!-- ROOM CONTROLS -->
-    <% if (locals.isRoomOwner) {%>
+    <% if (isOwner) {%>
         <div>
             <div>
                 <form onsubmit='emitUrlChange(event)'>
@@ -169,6 +169,12 @@
     socket.on('url change', (msg)=>{
         console.log('received url change command: ' + msg)
         player.cueVideoById(msg)
+        player.playVideo()
+    })
+
+    socket.on('room closed', ()=>{
+        console.log('stream room closed')
+        window.location.replace('http://localhost:3000/rooms');
     })
 
 </script>

@@ -38,17 +38,35 @@ const websocketServer = (httpServer) => {
             });
 
         })
-        socket.on('disconnect', () => {
+        socket.on('disconnect', async () => {
             console.log(`Room: ${room}: user disconnected`);
             if (isRoomOwner){
-                //shut down the room
+                //shut the room down
+                try{
+                    const user = await db.User.findById(userId)
+                    const room = await db.Room.findById(user.room)  
+                    room.viewers.forEach(viewer => {viewer.room = null})
+                    await db.Room.findByIdAndDelete(room._id)
+                    socket.broadcast.emit('room closed');            
+                }
+                catch(err){
+                    console.log(err)
+                    redirect("/rooms")
+                }
+
                 console.log(`Room ${room}: Shutting Down`)
-                socket.to(room).broadcast.emit('room shutdown')
+                socket.broadcast.to(room).emit('room shutdown')
+            }
+            else{
+                const foundUser = await db.User.findById(userId)
+                console.log(`Room ${room}: User ${foundUser.email} has disconnected`)
             }
         });
         socket.on('chat message', (msg)=>{
             console.log(`Room ${room}: ${msg}`)
-            socket.to(room).broadcast.emit('chat message', msg)
+            db.User.findById(userId, (err, foundUser) => {
+                socket.broadcast.to(room).emit('chat message', `${foundUser.email}: ${msg}`)
+            })
         })
         socket.on('pause', (msg) => {
             if (isRoomOwner){
@@ -59,13 +77,13 @@ const websocketServer = (httpServer) => {
         socket.on('resume', (msg) => {
             if (isRoomOwner){
                 console.log(`Room ${room}: Resume Command Emitted`)
-                socket.to(room).broadcast.emit('resume', 'true')
+                socket.broadcast.to(room).emit('resume', 'true')
             }
         })
         socket.on('url change', (msg) =>{
             if (isRoomOwner){
                 console.log(`Room ${room}: URL Change Command Emitted`)
-                socket.to(room).emit('url change', msg)
+                io.in(room).emit('url change', msg)
             }
         })
     })
