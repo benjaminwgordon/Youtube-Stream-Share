@@ -45,7 +45,7 @@ const websocketServer = (httpServer) => {
 
         })
         socket.on('disconnect', async () => {
-            console.log(`Room: ${room}: user disconnected`);
+            console.log(`Room: ${room}: user ${user} disconnected`);
             if (isRoomOwner){
                 //shut the room down
                 try{
@@ -67,10 +67,15 @@ const websocketServer = (httpServer) => {
             }
             else{
                 const foundUser = await db.User.findById(userId)
-                console.log(`Room ${room}: User ${foundUser.email} has disconnected`)
             }
         });
-        socket.on('sync', time =>{
+        socket.on('sync', async (time) =>{
+            // LOGGING
+            const user = await db.User.findById(userId)
+            console.log("user: ", user)
+            const room = await db.Room.findById(user.room)
+            console.log("room: ", room)
+            //END LOGGING 
             if (isRoomOwner){
                 socket.broadcast.emit('sync', time)
             }
