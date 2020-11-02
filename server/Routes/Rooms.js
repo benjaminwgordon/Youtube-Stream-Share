@@ -24,8 +24,6 @@ router.get('/:id', async (req, res) => {
             if (room.owner == req.app.locals.currentUserId){
                 user.room = room._id
                 await user.save()
-                room.viewers.push(user)
-                await room.save()
                 return res.render('player', {room, isOwner: true})
             }
             else if (room.public || room.invited.includes(user._id)){

@@ -45,7 +45,7 @@ const websocketServer = (httpServer) => {
 
         })
         socket.on('disconnect', async () => {
-            console.log(`Room: ${room}: user ${user} disconnected`);
+            console.log(`Room: ${room}: user disconnected`);
             if (isRoomOwner){
                 //shut the room down
                 try{
