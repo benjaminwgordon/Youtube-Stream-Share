@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const connectionString = 'mongodb://localhost:27017/youtube-share';
+const connectionString = process.env.CONNECTION_STRING;
 
 mongoose.connect(connectionString, {
     useNewUrlParser: true,
