@@ -10,7 +10,7 @@
     <!-- CONNECT TO SOCKET -->
     <script src='/socket.io/socket.io.js'></script>
     <script>
-        var socket = io.connect('http://localhost:3000', {
+        var socket = io.connect(location.origin.replace(/^http/, 'ws'), {
             query: document.cookie
         })
     </script>
