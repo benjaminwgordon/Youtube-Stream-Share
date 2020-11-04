@@ -12,7 +12,7 @@ const server = require("http").createServer(app);
 
 // Middleware
 const authenticate = require("./middleware/authenticate")(app);
-app.use(helmet);
+app.use(helmet());
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}))
 
