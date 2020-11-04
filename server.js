@@ -1,9 +1,9 @@
 // External Imports
 require('dotenv').config();
-const jwt = require("jsonwebtoken");
 const express = require("express");
 const WebSocket = require("ws");
 const cookieParser = require("cookie-parser");
+const helmet = require('helmet');
 
 
 // Server Initialization
@@ -12,8 +12,10 @@ const server = require("http").createServer(app);
 
 // Middleware
 const authenticate = require("./middleware/authenticate")(app);
+app.use(helmet);
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}))
+
 
 // Configs
 app.set("view engine", "ejs");
