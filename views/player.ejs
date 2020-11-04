@@ -144,12 +144,10 @@
 
     // send a timestamp synchronization signal
     setInterval(() => {
-        console.log("emitting sync")
         socket.emit('sync', player.getCurrentTime())
     }, 2000)
 
     function emitChat(event){
-        console.log('called')
         event.preventDefault();
         const input = document.getElementById('chatInput');
         const message = input.value;
@@ -163,7 +161,6 @@
     }
 
     function emitAnnouncement(event){
-        console.log('called')
         event.preventDefault();
         const input = document.getElementById('announcementInput');
         const message = input.value;
@@ -185,12 +182,10 @@
     }
 
     function emitPause(){
-        console.log('Emitting pause command')
         socket.emit('pause', 'true')
     }
 
     function emitResume(){
-        console.log('Emitting resume command')
         socket.emit('resume', 'true')
     }
 
@@ -198,47 +193,38 @@
 
     //receive and reset to sync signal
     socket.on('sync', (hostTime)=>{
-        console.log('sync signal received')
         const timeDiff = Math.abs(player.getCurrentTime() - hostTime)
-        console.log("TimeDiff: ", timeDiff)
         if (timeDiff >= 0.5 && player.getPlayerState() != YT.PlayerState.PAUSED){
             player.seekTo(hostTime, true)
         }
     })
 
     socket.on('chat message', (msg) => {
-        console.log('received chat message')
         appendMessageToChat(msg, false)
     })
 
     socket.on('announcement', (msg) => {
-        console.log('received announcement')
         appendMessageToAnnouncements(msg, false)
     })
 
     socket.on('pause', (msg) => {
-        console.log('received pause command')
         player.pauseVideo()
     })
 
     socket.on('resume', (msg) => {
-        console.log('received resume command')
         player.playVideo()
     })
 
     socket.on('url change', (msg)=>{
-        console.log('received url change command: ' + msg)
         player.cueVideoById(msg)
         player.playVideo()
     })
 
     socket.on('room closed', ()=>{
-        console.log('stream room closed')
         window.location.replace(location.origin);
     })
 
     socket.on('room connect error', ()=>{
-        console.log('room connect error')
         window.location.replace(location.origin);
     })
 </script>
