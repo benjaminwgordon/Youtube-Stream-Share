@@ -130,7 +130,7 @@
         const input = document.getElementById('chatInput');
         const message = input.value;
         if (message != ''){
-            socket.emit('chat message', message);
+            socket.emit('chat message', `<%= locals.currentUserEmail %>: ${message}`);
             //append message to users own chat instantly
             appendMessageToChat(`<%= locals.currentUserEmail %>: ${message}`)
         }

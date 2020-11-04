@@ -77,7 +77,7 @@ const websocketServer = (httpServer) => {
         socket.on('chat message', (msg)=>{
             console.log(`Room ${room}: ${msg}`)
             db.User.findById(userId, (err, foundUser) => {
-                socket.broadcast.to(room).emit('chat message', `${foundUser.email}: ${msg}`)
+                socket.broadcast.to(room).emit('chat message',msg)
             })
         })
         socket.on('pause', (msg) => {
