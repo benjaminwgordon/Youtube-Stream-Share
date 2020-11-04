@@ -41,7 +41,7 @@
 
     <!-- YOUTUBE PLAYER -->
 
-    <div class="columns is-gapless">
+    <div class="columns">
         <div class="column is-one-fifth controls">
             <!-- ROOM CONTROLS -->
             <% if (isOwner) {%>
@@ -54,10 +54,11 @@
             <div class='announcement-form'>
                 <form onsubmit='emitAnnouncement(event)'>
                     <input id='announcementInput' placeholder='make announcement' type='text' class="input is-secondary" autocomplete="off">
+                    <input id='submitAnnouncement' type='submit' value='+' class="input is-primary">
                 </form>
             </div>
             <% } else { %>
-                <h1>Announcements</h1>
+                <h1 class="is-size-3">Announcements</h1>
             <% } %>
             <div class="announcement-messages">
                 <ul id='announcements' ></ul>
