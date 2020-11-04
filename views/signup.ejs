@@ -4,42 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-
-    <!-- REGISTRATION -->
-    <div>
-        <form method="POST" action="/users/register">
-            <div>
-                <p>Email</p>
-                <input type="email" name="email" />
+    <nav class="navbar has-background-secondary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a href="../" class="navbar-item">
+                Sync-Stream
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <div class="navbar-item">
+                    <a href="../">
+                        Rooms
+                    </a>
+                </div>
             </div>
-            <div>
-                <p>Password</p>
-                <input type="password" name="password" />
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <span><%=locals.currentUserEmail%></span>
+                </div>
             </div>
-            <div>
-                <input type="submit" value="register" />
+        </div>
+    </nav>
+    <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-one-third login-container">
+            <div class="tab-selector">
+                <button onclick="tabSelectRegister()" class="button">Register</button>
+                <button onclick="tabSelectLogin()" class="button">Login</button>
             </div>
-        </form>
+            <div id='register-tab'>
+                <form method="POST" action="/users/register" class="credential-form">
+                    <div>
+                        <p>Email</p>
+                        <input type="email" name="email" class="input"/>
+                    </div>
+                    <div>
+                        <p>Password</p>
+                        <input type="password" name="password" class="input" />
+                    </div>
+                    <input type="submit" value="register" class="input cred-submit"/>
+                </form>
+            </div>
+        
+            <!-- LOGIN -->
+            <div id='login-tab'>
+                <form method="POST" action="/users/login" class="credential-form">
+                    <div>
+                        <p>Email</p>
+                        <input type="email" name="email" class="input"/>
+                    </div>
+                    <div>
+                        <p>Password</p>
+                        <input type="password" name="password" class="input"/>
+                    </div>
+                    <input type="submit" value="login" class="input cred-submit"/>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <!-- LOGIN -->
-    <div>
-        <form method="POST" action="/users/login">
-            <div>
-                <p>Email</p>
-                <input type="email" name="email" />
-            </div>
-            <div>
-                <p>Password</p>
-                <input type="password" name="password" />
-            </div>
-            <div>
-                <input type="submit" value="login" />
-            </div>
-        </form>
-    </div>
-    
+<script>
+    const registerTab = document.getElementById('register-tab')
+    const loginTab = document.getElementById('login-tab')
+
+    registerTab.classList.add('hidden')
+
+    const tabSelectRegister = () => {
+        loginTab.classList.add('hidden')
+        registerTab.classList.remove('hidden')
+    }
+
+    const tabSelectLogin = () => {
+        registerTab.classList.add('hidden')
+        loginTab.classList.remove('hidden')
+    }
+
+</script>
+
 </body>
 </html>

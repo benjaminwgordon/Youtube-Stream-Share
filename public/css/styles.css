@@ -7725,7 +7725,11 @@ h1 {
   flex-direction: column;
   justify-content: flex-end; }
 
-#chat {
+.chat-wrapper {
+  padding: 10px;
+  background-color: white; }
+
+#chat, #announcement {
   overflow: hidden;
   display: flex;
   flex-direction: column-reverse; }
@@ -7735,22 +7739,20 @@ h1 {
   color: #3273dc;
   padding: 10px; }
 
-#anchor {
-  overflow-anchor: auto;
-  height: 1px; }
-
-.column {
-  height: 80vh;
-  box-shadow: 2px 0 0px 0px #C8C8C8; }
-
-html {
-  overflow: hidden; }
-
 .chat-form {
   padding: 8px; }
 
+.column {
+  height: 80vh; }
+
+html {
+  height: 100%;
+  overflow: hidden;
+  background: #33d9db;
+  background-size: cover;
+  background: linear-gradient(66deg, rgba(51, 217, 219, 0.689513) 0%, rgba(24, 204, 47, 0.664303) 100%); }
+
 form {
-  padding: 10px;
   display: flex; }
 
 .input {
@@ -7762,3 +7764,56 @@ form {
 #submitVideoUrl {
   flex: 1;
   display: inline-block; }
+
+.columns {
+  padding: 10px; }
+
+.room-container {
+  height: 75vh;
+  display: flex;
+  margin-top: 40px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 0 5px 1px #C8C8C8; }
+
+.room-list ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
+.room-list ul li {
+  margin: 5px; }
+
+.room-form {
+  margin-bottom: 50px; }
+
+.login-container {
+  height: 50%;
+  background-color: white;
+  margin-top: 20%;
+  padding: 0; }
+
+.hidden {
+  display: none; }
+
+.tab-selector {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row; }
+
+.tab-selector button {
+  flex-grow: 1;
+  border-radius: initial;
+  margin: 0; }
+
+.credential-form {
+  width: 75%;
+  margin: auto;
+  display: flex;
+  flex-direction: column; }
+
+.cred-submit {
+  width: 50%;
+  align-self: center; }

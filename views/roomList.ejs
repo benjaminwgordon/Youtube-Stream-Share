@@ -4,22 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Public Streams</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-    <div>
-        <form method="POST" action="/rooms/">
-            <input type="submit" value="Create a Room">
-        </form>
-    </div>
-    <div>
-        <ul>
-            <% if (rooms.length == 0 ) { %>
-                <p>No public rooms found</p>
-            <% } %>
-            <% for (room of rooms) { %>
-                <li><a href=<%= `/rooms/${room._id}` %>><%=room.ownerName%>'s Stream</a></li>
-            <% } %>
-        </ul>
+    <nav class="navbar has-background-secondary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a href="../" class="navbar-item">
+                Sync-Stream
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <div class="navbar-item">
+                    <a href="../">
+                        Rooms
+                    </a>
+                </div>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <span><%=locals.currentUserEmail%></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-one-third room-container">
+            <div class="room-form">
+                <form method="POST" action="/rooms/">
+                    <input type="submit" value="Create a Room" class="button">
+                </form>
+            </div>
+            <div class="room-list">
+                <ul>
+                    <% if (rooms.length == 0 ) { %>
+                        <p>No public rooms found</p>
+                    <% } %>
+                    <% for (room of rooms) { %>
+                        <li class="button"><a href=<%= `/rooms/${room._id}` %>><%=room.ownerName%>'s Stream</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 </html>

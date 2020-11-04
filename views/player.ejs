@@ -21,6 +21,11 @@
                     </a>
                 </div>
             </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <span><%=locals.currentUserEmail%></span>
+                </div>
+            </div>
         </div>
     </nav>
     <!-- CONNECT TO SOCKET -->
@@ -45,17 +50,18 @@
                     <input id='submitVideoUrl' type='submit' value='+' class="input is-primary">
                 </form>
             <% } %>    
-            <div class="announcement-messages">
-                <ul id='announcements' ></ul>
-            </div>
             <% if (isOwner) {%>
             <div class='announcement-form'>
                 <form onsubmit='emitAnnouncement(event)'>
-                    <input id='announcementInput' placeholder='announcement message' type='text' class="input is-secondary" autocomplete="off">
+                    <input id='announcementInput' placeholder='make announcement' type='text' class="input is-secondary" autocomplete="off">
                 </form>
             </div>
-            <% } %>    
-
+            <% } else { %>
+                <h1>Announcements</h1>
+            <% } %>
+            <div class="announcement-messages">
+                <ul id='announcements' ></ul>
+            </div>
             <!-- END ROOM CONTROLS -->
         </div>
         <div class="column">
