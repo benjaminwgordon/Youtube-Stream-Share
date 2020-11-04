@@ -4,84 +4,84 @@
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title><%= locals.currentUserEmail%>'s Stream</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-
+    <nav class="navbar has-background-secondary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a href="../" class="navbar-item">
+                Sync-Stream
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <div class="navbar-item">
+                    <a href="../">
+                        Rooms
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
     <!-- CONNECT TO SOCKET -->
     <script src='/socket.io/socket.io.js'></script>
+
+    <!-- SEND CREDS TO SOCKET -->
     <script>
         var socket = io.connect(location.origin.replace(/^http/, 'ws'), {
             query: document.cookie
         })
     </script>
 
-    <h1>Welcome back <%= locals.currentUserEmail %></h1>
 
     <!-- YOUTUBE PLAYER -->
-    <div id='player'></div>
 
-    <!-- ROOM CONTROLS -->
-    <% if (isOwner) {%>
-        <div>
-            <div>
-                <form onsubmit='emitUrlChange(event)'>
-                    <input id='videoUrlInput' type='text' placeholder='Video URL'>
-                    <input id='submitVideoUrl' type='submit' value='Change Video'>
+    <div class="columns is-gapless">
+        <div class="column is-one-fifth controls">
+            <!-- ROOM CONTROLS -->
+            <h1>Welcome back <%= locals.currentUserEmail %></h1>
+        <% if (isOwner) {%> <span>You are the host of this stream</span> <% } %>
+            <% if (isOwner) {%>
+                <div>
+                    <div>
+                        <form onsubmit='emitUrlChange(event)'>
+                            <input id='videoUrlInput' type='text' placeholder='Video URL' class="input is-secondary">
+                            <input id='submitVideoUrl' type='submit' value='Change Video' class="input is-secondary">
+                        </form>
+                    </div>
+
+                </div>
+            <% } %>    
+            <!-- END ROOM CONTROLS -->
+        </div>
+        <div class="column">
+            <div class="player-container">
+                <div id='player' class='player'></div>
+            </div>
+        </div>
+        <div class="column is-one-fifth chat">
+            <!-- CHAT -->
+            <div class="chat-messages">
+                <ul id='chat' ></ul>
+                <div id="anchor"></div>
+            </div>
+            <div class='chat-form'>
+                <form onsubmit='emitChat(event)'>
+                    <input id='chatInput' placeholder='chat message' type='text' class="input is-secondary" autocomplete="off">
                 </form>
             </div>
+            <!-- END CHAT -->
 
-        </div>
-    <% } %>    
-    <!-- END ROOM CONTROLS -->
-
-    <!-- CHAT -->
-    <div>
-        <form onsubmit='emitChat(event)'>
-            <input id='chatInput' placeholder='chat message' type='text'>
-            <input type='submit' value='submit'>
-        </form>
     </div>
-
-    <div>
-        <ul id='chat'></ul>
-    </div>
-    <!-- END CHAT -->
+</div>
 </body>
+
+<!-- LOAD PLAYER API VERSION -->
+<script src=<%= locals.isOwner ? "../js/hostPlayer.js" : "../js/viewerPlayer.js" %>></script>
+
+
+<!-- <script src="../js/player.js"></script> -->
 <script>
-
-    // join the current rooms socket connection
-
-
-
-    var tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    var player;
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            height: '390',
-            width: '640',
-            videoId: 'PD2XgQOyCCk',
-            playerVars: {
-                autoplay: 0,
-                controls:1,
-                disablekb:1,
-                fs:0,
-                modestBranding:1,
-                volume:0,
-            },
-            events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-            }
-        });
-    }
-
-
-
-    
     function onPlayerReady(event) {
         event.target.playVideo();
     }
@@ -110,10 +110,14 @@
         return videoId
     }
 
-    function appendMessageToChat(msg){
+    function appendMessageToChat(msg, clear){
         const message = document.createElement('li')
+        const chat = document.getElementById('chat')
         message.appendChild(document.createTextNode(msg))
-        document.getElementById('chat').appendChild(message)
+        chat.prepend(message)
+        if (clear){
+            document.getElementById('chatInput').value = ''
+        }
     }
 
     // SOCKET EMITTERS
@@ -132,7 +136,7 @@
         if (message != ''){
             socket.emit('chat message', `<%= locals.currentUserEmail %>: ${message}`);
             //append message to users own chat instantly
-            appendMessageToChat(`<%= locals.currentUserEmail %>: ${message}`)
+            appendMessageToChat(`<%= locals.currentUserEmail %>: ${message}`, true)
         }
         input.value = '';
         return false;
@@ -170,7 +174,7 @@
 
     socket.on('chat message', (msg) => {
         console.log('received chat message')
-        appendMessageToChat(msg)
+        appendMessageToChat(msg, false)
     })
 
     socket.on('pause', (msg) => {
@@ -198,6 +202,5 @@
         console.log('room connect error')
         window.location.replace(location.origin);
     })
-
 </script>
 </html>
