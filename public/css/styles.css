@@ -7712,9 +7712,13 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   padding-top: 56.25%;
   position: relative; }
 
-.controls h1 {
+h1 {
   margin: auto;
   text-align: center; }
+
+.stream-title {
+  font-size: 2rem;
+  margin-left: 10px; }
 
 .chat {
   display: flex;
@@ -7722,12 +7726,14 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   justify-content: flex-end; }
 
 #chat {
+  overflow: hidden;
   display: flex;
   flex-direction: column-reverse; }
 
 .chat-messages {
   overflow-anchor: none;
-  color: #3273dc; }
+  color: #3273dc;
+  padding: 10px; }
 
 #anchor {
   overflow-anchor: auto;
@@ -7742,3 +7748,17 @@ html {
 
 .chat-form {
   padding: 8px; }
+
+form {
+  padding: 10px;
+  display: flex; }
+
+.input {
+  margin: 5px; }
+
+.column form {
+  margin-top: 40px; }
+
+#submitVideoUrl {
+  flex: 1;
+  display: inline-block; }

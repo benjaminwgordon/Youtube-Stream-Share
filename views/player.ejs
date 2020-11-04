@@ -39,22 +39,28 @@
     <div class="columns is-gapless">
         <div class="column is-one-fifth controls">
             <!-- ROOM CONTROLS -->
-            <h1>Welcome back <%= locals.currentUserEmail %></h1>
-        <% if (isOwner) {%> <span>You are the host of this stream</span> <% } %>
             <% if (isOwner) {%>
-                <div>
-                    <div>
-                        <form onsubmit='emitUrlChange(event)'>
-                            <input id='videoUrlInput' type='text' placeholder='Video URL' class="input is-secondary">
-                            <input id='submitVideoUrl' type='submit' value='Change Video' class="input is-secondary">
-                        </form>
-                    </div>
-
-                </div>
+                <form onsubmit='emitUrlChange(event)'>
+                    <input id='videoUrlInput' type='text' placeholder='Load new video from url' class="input is-secondary">
+                    <input id='submitVideoUrl' type='submit' value='+' class="input is-primary">
+                </form>
             <% } %>    
+            <div class="announcement-messages">
+                <ul id='announcements' ></ul>
+            </div>
+            <% if (isOwner) {%>
+            <div class='announcement-form'>
+                <form onsubmit='emitAnnouncement(event)'>
+                    <input id='announcementInput' placeholder='announcement message' type='text' class="input is-secondary" autocomplete="off">
+                </form>
+            </div>
+            <% } %>    
+
             <!-- END ROOM CONTROLS -->
         </div>
         <div class="column">
+            <h1 class='stream-title'><%= locals.currentUserEmail %>'s Stream</h1>
+
             <div class="player-container">
                 <div id='player' class='player'></div>
             </div>
@@ -63,7 +69,6 @@
             <!-- CHAT -->
             <div class="chat-messages">
                 <ul id='chat' ></ul>
-                <div id="anchor"></div>
             </div>
             <div class='chat-form'>
                 <form onsubmit='emitChat(event)'>
@@ -118,6 +123,14 @@
         if (clear){
             document.getElementById('chatInput').value = ''
         }
+    }
+
+    function appendMessageToAnnouncements(msg, clear){
+        const message = document.createElement('li')
+        const announcements = document.getElementById('announcements')
+        message.appendChild(document.createTextNode(msg))
+        announcements.prepend(message)
+        document.getElementById('announcementInput').value = ''
     }
 
     // SOCKET EMITTERS
