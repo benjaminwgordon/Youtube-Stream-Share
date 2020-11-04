@@ -125,7 +125,7 @@
         }
     }
 
-    function appendMessageToAnnouncements(msg, clear){
+    function appendMessageToAnnouncements(msg){
         const message = document.createElement('li')
         const announcements = document.getElementById('announcements')
         message.appendChild(document.createTextNode(msg))
@@ -150,6 +150,20 @@
             socket.emit('chat message', `<%= locals.currentUserEmail %>: ${message}`);
             //append message to users own chat instantly
             appendMessageToChat(`<%= locals.currentUserEmail %>: ${message}`, true)
+        }
+        input.value = '';
+        return false;
+    }
+
+    function emitAnnouncement(event){
+        console.log('called')
+        event.preventDefault();
+        const input = document.getElementById('announcementInput');
+        const message = input.value;
+        if (message != ''){
+            socket.emit('announcement', message);
+            //append message to users own chat instantly
+            appendMessageToAnnouncements(message)
         }
         input.value = '';
         return false;
@@ -188,6 +202,11 @@
     socket.on('chat message', (msg) => {
         console.log('received chat message')
         appendMessageToChat(msg, false)
+    })
+
+    socket.on('announcement', (msg) => {
+        console.log('received announcement')
+        appendMessageToAnnouncements(msg, false)
     })
 
     socket.on('pause', (msg) => {

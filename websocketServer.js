@@ -75,10 +75,12 @@ const websocketServer = (httpServer) => {
             }
         })
         socket.on('chat message', (msg)=>{
-            console.log(`Room ${room}: ${msg}`)
-            db.User.findById(userId, (err, foundUser) => {
-                socket.broadcast.to(room).emit('chat message',msg)
-            })
+            console.log(`Room ${room}: chat message ${msg}`)
+            socket.broadcast.to(room).emit('chat message',msg)
+        })
+        socket.on('announcement', (msg)=>{
+            console.log(`Room ${room}: announcement ${msg}`)
+            socket.broadcast.to(room).emit('announcement',msg)
         })
         socket.on('pause', (msg) => {
             if (isRoomOwner){
