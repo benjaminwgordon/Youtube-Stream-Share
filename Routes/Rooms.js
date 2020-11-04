@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { exec } = require('child_process')
 const mongoose = require("mongoose")
 const db = require('../Models')
 const Room = require('../Models/Room')
@@ -6,9 +7,17 @@ const Room = require('../Models/Room')
 // INDEX
 router.get('/', async (req, res) => {
     try{
-        const rooms = await db.Room.find({public:true})
-        return res.render('roomList', {rooms: rooms.map(room => room._id)})
-    }catch(err){
+        let rooms = await db.Room.find({public:true}).populate('owner').exec()
+        // strip all non-necessary data
+        rooms = rooms.map(room => {
+            return ({
+                ownerName: room.owner.email,
+                _id: room._id
+            })
+        })     
+        return res.render('roomList', {rooms})
+    }
+    catch(err){
         console.log(err)
         return res.render('roomList', {rooms:[]})
     }

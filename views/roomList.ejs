@@ -17,7 +17,7 @@
                 <p>No public rooms found</p>
             <% } %>
             <% for (room of rooms) { %>
-                <li><a href=<%= `/rooms/${room}` %>>room.name</a></li>
+                <li><a href=<%= `/rooms/${room._id}` %>><%=room.ownerName%>'s Stream</a></li>
             <% } %>
         </ul>
     </div>
