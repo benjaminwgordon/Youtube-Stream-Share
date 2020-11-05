@@ -46,7 +46,7 @@
             <!-- ROOM CONTROLS -->
             <% if (isOwner) {%>
                 <form onsubmit='emitUrlChange(event)'>
-                    <input id='videoUrlInput' type='text' placeholder='Load new video from url' class="input is-secondary">
+                    <input id='videoUrlInput' type='url' placeholder='Load new video from url' class="input is-secondary">
                     <input id='submitVideoUrl' type='submit' value='+' class="input is-primary">
                 </form>
             <% } %>    
