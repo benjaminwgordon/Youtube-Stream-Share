@@ -52,8 +52,8 @@ router.post('/login', [
 
 // REGISTER
 router.post("/register", [
-        body('email').isEmail(),
-        body('password').isLength({min:8})
+        body('email').isEmail().normalizeEmail(),
+        body('password').isLength({min:8}).escape()
     ], async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()){

@@ -7743,7 +7743,7 @@ h1 {
 
 .chat-messages {
   overflow-anchor: none;
-  color: #3273dc;
+  color: #000000;
   padding: 10px; }
 
 .chat-form {
@@ -7836,3 +7836,6 @@ form {
   margin: auto;
   text-align: center;
   margin-top: 20px; }
+
+#register-tab {
+  background-color: whitesmoke; }

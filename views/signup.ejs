@@ -44,7 +44,7 @@
                     </div>
                     <div>
                         <p>Password</p>
-                        <input type="password" name="password" class="input" />
+                        <input id='password-input' onchange="passwordValidate(event)" type="password" name="password" class="input" />
                     </div>
                     <input type="submit" value="register" class="input cred-submit"/>
                 </form>
@@ -60,7 +60,9 @@
                     </div>
                     <div>
                         <p>Password</p>
-                        <input type="password" name="password" class="input"/>
+                        <input id='password-input'type="password" onchange="passwordValidate(event)" name="password" class="input"/>
+                        <p class="password-length-suggestion hidden">Password must be at least 8 characters</p>
+                        <p class="password-special-character-suggestion hidden">Password must contain a special character</p>
                     </div>
                     <input type="submit" value="login" class="input cred-submit"/>
                 </form>
@@ -82,6 +84,32 @@
     const tabSelectLogin = () => {
         registerTab.classList.add('hidden')
         loginTab.classList.remove('hidden')
+    }
+
+    const passwordValidate = (event) => {
+        console.log("called")
+        passwordIsLengthEight(event.target)
+        passwordContainsSpecialCharacters(event.target)
+    }
+
+    const passwordIsLengthEight = (input) => {
+        const passwordLengthSuggestion = document.querySelector('password-length-suggestion')
+        if (input.value.length < 8){
+            passwordLengthSuggestion.classList.add('hidden')
+        }else{
+            passwordLengthSuggestion.classList.remove('hidden')
+        }
+    }
+
+    const passwordContainsSpecialCharacters = (input) => {
+        const passwordSpecialCharacterSuggestion = document.querySelector('password-special-character-suggestion')
+
+        if (!/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(input.value)){
+            passwordSpecialCharacterSuggestion.classList.add('hidden')
+        } else {
+            passwordSpecialCharacterSuggestion.classList.remove('hidden')
+        }
+        console.log(passwordSpecialCharacterSuggestion.classList)
     }
 
 </script>
