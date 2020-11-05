@@ -7830,3 +7830,9 @@ form {
 .cred-submit {
   width: 50%;
   align-self: center; }
+
+.error-message {
+  color: crimson;
+  margin: auto;
+  text-align: center;
+  margin-top: 20px; }

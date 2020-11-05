@@ -36,6 +36,7 @@
                 <button onclick="tabSelectLogin()" class="button">Login</button>
             </div>
             <div id='register-tab'>
+                <p class="error-message"><%= locals.message ? message : "" %></p>
                 <form method="POST" action="/users/register" class="credential-form">
                     <div>
                         <p>Email</p>
@@ -51,6 +52,7 @@
         
             <!-- LOGIN -->
             <div id='login-tab'>
+                <p class="error-message"><%= locals.message ? message : "" %></p>
                 <form method="POST" action="/users/login" class="credential-form">
                     <div>
                         <p>Email</p>
